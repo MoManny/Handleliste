@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ukemeny og Handleliste</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --green: #16a34a;
+      --danger: #dc2626;
+      --border: #e5e7eb;
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, #f9fbff 100%);
+      color: var(--text);
+      padding: 20px;
+    }
+
+    .app {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 32px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      border: 1px solid var(--border);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 22px;
+    }
+
+    .days {
+      display: grid;
+      gap: 12px;
+    }
+
+    .day-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .day-row label {
+      font-weight: bold;
+      color: var(--text);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 4px rgba(147, 197, 253, 0.25);
+    }
+
+    .input-wrap {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: var(--primary);
+      color: white;
+      font-weight: bold;
+    }
+
+    .primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .secondary {
+      background: #eef2ff;
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    .secondary:hover {
+      background: #dbeafe;
+    }
+
+    .danger {
+      background: #fef2f2;
+      color: var(--danger);
+      font-weight: bold;
+    }
+
+    .danger:hover {
+      background: #fee2e2;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    li:last-child {
+      border-bottom: none;
+    }
+
+    .left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .left input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--green);
+    }
+
+    .item-text {
+      word-break: break-word;
+    }
+
+    .done {
+      text-decoration: line-through;
+      color: #9ca3af;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 18px 0 4px;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 780px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .day-row {
+        grid-template-columns: 1fr;
+      }
+
+      .input-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="hero">
+      <h1>📅 Ukemeny + 🛒 Handleliste</h1>
+      <p>Planlegg middager og samle alt du trenger på ett sted.</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Ukemeny</h2>
+        <div class="days" id="daysContainer"></div>
+        <div style="margin-top: 16px;">
+          <button class="secondary" id="clearMenuBtn">Tøm ukemeny</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Handleliste</h2>
+
+        <div class="input-wrap">
+          <input type="text" id="itemInput" placeholder="Legg til en vare, f.eks. tomater" />
+          <button class="primary" id="addBtn">Legg til</button>
+        </div>
+
+        <div class="toolbar">
+          <div class="muted" id="countLabel">0 varer</div>
+          <button class="danger" id="clearBoughtBtn">Fjern kjøpte</button>
+        </div>
+
+        <ul id="shoppingList"></ul>
+        <div class="empty" id="emptyState">Ingen varer enda.</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Alt lagres automatisk i nettleseren din.
+    </div>
+  </div>
+
+  <script>
+    const dayNames = [
+      'Mandag',
+      'Tirsdag',
+      'Onsdag',
+      'Torsdag',
+      'Fredag',
+      'Lørdag',
+      'Søndag'
+    ];
+
+    const daysContainer = document.getElementById('daysContainer');
+    const itemInput = document.getElementById('itemInput');
+    const addBtn = document.getElementById('addBtn');
+    const shoppingList = document.getElementById('shoppingList');
+    const countLabel = document.getElementById('countLabel');
+    const emptyState = document.getElementById('emptyState');
+    const clearBoughtBtn = document.getElementById('clearBoughtBtn');
+    const clearMenuBtn = document.getElementById('clearMenuBtn');
+
+    let menu = JSON.parse(localStorage.getItem('ukemenyData') || '{}');
+    let items = JSON.parse(localStorage.getItem('shoppingData') || '[]');
+
+    function saveMenu() {
+      localStorage.setItem('ukemenyData', JSON.stringify(menu));
+    }
+
+    function saveItems() {
+      localStorage.setItem('shoppingData', JSON.stringify(items));
+    }
+
+    function renderMenu() {
+      daysContainer.innerHTML = '';
+
+      dayNames.forEach(day => {
+        const row = document.createElement('div');
+        row.className = 'day-row';
+
+        const label = document.createElement('label');
+        label.textContent = day;
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = 'Hva skal du spise?';
+        input.value = menu[day] || '';
+
+        input.addEventListener('input', function () {
+          menu[day] = input.value;
+          saveMenu();
+        });
+
+        row.appendChild(label);
+        row.appendChild(input);
+        daysContainer.appendChild(row);
+      });
+    }
+
+    function updateCount() {
+      const total = items.length;
+      countLabel.textContent = total === 1 ? '1 vare' : total + ' varer';
+      emptyState.style.display = total === 0 ? 'block' : 'none';
+    }
+
+    function renderItems() {
+      shoppingList.innerHTML = '';
+
+      items.forEach((item, index) => {
+        const li = document.createElement('li');
+
+        const left = document.createElement('div');
+        left.className = 'left';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = item.done;
+        checkbox.addEventListener('change', function () {
+          items[index].done = checkbox.checked;
+          saveItems();
+          renderItems();
+        });
+
+        const span = document.createElement('span');
+        span.textContent = item.name;
+        span.className = 'item-text';
+        if (item.done) {
+          span.classList.add('done');
+        }
+
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Slett';
+        delBtn.className = 'danger';
+        delBtn.style.padding = '8px 10px';
+        delBtn.style.fontSize = '14px';
+        delBtn.addEventListener('click', function () {
+          items.splice(index, 1);
+          saveItems();
+          renderItems();
+        });
+
+        left.appendChild(checkbox);
+        left.appendChild(span);
+        li.appendChild(left);
+        li.appendChild(delBtn);
+
+        shoppingList.appendChild(li);
+      });
+
+      updateCount();
+    }
+
+    function addItem() {
+      const value = itemInput.value.trim();
+      if (!value) return;
+
+      items.push({ name: value, done: false });
+      itemInput.value = '';
+      saveItems();
+      renderItems();
+      itemInput.focus();
+    }
+
+    function clearBought() {
+      items = items.filter(item => !item.done);
+      saveItems();
+      renderItems();
+    }
+
+    function clearMenu() {
+      menu = {};
+      saveMenu();
+      renderMenu();
+    }
+
+    addBtn.addEventListener('click', addItem);
+
+    itemInput.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        addItem();
+      }
+    });
+
+    clearBoughtBtn.addEventListener('click', clearBought);
+    clearMenuBtn.addEventListener('click', clearMenu);
+
+    renderMenu();
+    renderItems();
+  </script>
+</body>
+</html>
